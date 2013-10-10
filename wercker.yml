@@ -22,16 +22,16 @@ build:
         name: run gradle build
         code: |
           gradle --full-stacktrace --project-cache-dir=$WERCKER_CACHE_DIR build
-  after-steps:
-    # Use the build results
+after-steps:
+  # Use the build results
+  - script:
+      name: inspect build result
+      code: |
+        ls -la GettingStarted/build/apk/
+        cp GettingStarted/build/apk/*.apk $WERCKER_REPORT_ARTIFACTS_DIR
+deploy:
+  steps:
     - script:
-        name: inspect build result
+        name: upload to testflight
         code: |
-          ls -la GettingStarted/build/apk/
-          cp GettingStarted/build/apk/*.apk $WERCKER_REPORT_ARTIFACTS_DIR
-  deploy:
-    steps:
-      - script:
-          name: upload to testflight
-          code: |
-            curl http://testflightapp.com/api/builds.json -F file=@GettingStarted/build/apk/GettingStarted-debug-unaligned.apk -F api_token="$API_TOKEN" -F team_token="$TEAM_TOKEN" -F notes="Deploy of commit: $WERCKER_GIT_COMMIT from branch: $WERCKER_GIT_BRANCH" -F notify=False -F distribution_lists=''
+          curl http://testflightapp.com/api/builds.json -F file=@GettingStarted/build/apk/GettingStarted-debug-unaligned.apk -F api_token="$API_TOKEN" -F team_token="$TEAM_TOKEN" -F notes="Deploy of commit: $WERCKER_GIT_COMMIT from branch: $WERCKER_GIT_BRANCH" -F notify=False -F distribution_lists=''
