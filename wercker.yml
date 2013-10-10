@@ -23,9 +23,3 @@ build:
         code: |
           ls -la GettingStarted/build/apk/
           cp GettingStarted/build/apk/*.apk $WERCKER_REPORT_ARTIFACTS_DIR
-deploy:
-  steps:
-    - script:
-        name: upload to testflight
-        code: |
-          curl http://testflightapp.com/api/builds.json -F file=@GettingStarted/build/apk/GettingStarted-debug-unaligned.apk -F api_token="$API_TOKEN" -F team_token="$TEAM_TOKEN" -F notes="Deploy of commit: $WERCKER_GIT_COMMIT from branch: $WERCKER_GIT_BRANCH" -F notify=False -F distribution_lists=''
