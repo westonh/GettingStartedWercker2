@@ -1,5 +1,5 @@
 box: wercker/android
-# Build definition
+# Build definition file
 build:
   # The steps that will be executed on build
   steps:
