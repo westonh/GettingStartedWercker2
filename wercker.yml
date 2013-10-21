@@ -1,31 +1,25 @@
 box: wercker/android
-# Build definition
 build:
-    # The steps that will be executed on build
-    steps:
-      - script:
-          name: show base information
-          code: |
+  after-steps:
+    - script:
+        code: |
+            ls -la GettingStarted/build/apk/
+            cp GettingStarted/build/apk/*.apk $WERCKER_REPORT_ARTIFACTS_DIR
+        name: "inspect build result"
+        true: success
+  steps:
+    - script:
+        code: |
             gradle -v
             echo $ANDROID_HOME
             echo $ANDROID_BUILD_TOOLS
             echo $ANDROID_UPDATE_FILTER
-      # A step that executes gradle build command
-      - script:
-          name: run gradle
-          code: |
-            gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR build
-  after-steps:
-    # Show the build results
+        name: "show base information"
     - script:
-        name: inspect build result
-        on: success
-        code: |
-          ls -la GettingStarted/build/apk/
-          cp GettingStarted/build/apk/*.apk $WERCKER_REPORT_ARTIFACTS_DIR
+        code: "gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR build\n"
+        name: "run gradle"
 deploy:
   steps:
     - script:
-        name: upload to testflight
-        code: |
-          curl http://testflightapp.com/api/builds.json -F file=@GettingStarted/build/apk/GettingStarted-debug-unaligned.apk -F api_token="$API_TOKEN" -F team_token="$TEAM_TOKEN" -F notes="Deploy of commit: $WERCKER_GIT_COMMIT from branch: $WERCKER_GIT_BRANCH" -F notify=False -F distribution_lists=''
+        code: "curl http://testflightapp.com/api/builds.json -F file=@GettingStarted/build/apk/GettingStarted-debug-unaligned.apk -F api_token=\"$API_TOKEN\" -F team_token=\"$TEAM_TOKEN\" -F notes=\"Deploy of commit: $WERCKER_GIT_COMMIT from branch: $WERCKER_GIT_BRANCH\" -F notify=False -F distribution_lists=''"
+        name: "upload to testflight"
