@@ -15,6 +15,13 @@ build:
             echo $ANDROID_BUILD_TOOLS
             echo $ANDROID_UPDATE_FILTER
         name: "show base information"
+    - android-sdk-update:
+        filter: sysimg-18
+    - setup-android-emulator:
+        target: android-18
+    - script:
+        name: "run gradle connected check"
+        code: "gradle --project-cache-dir=$WERCKER_CACHE_DIR connectedCheck"
     - script:
         code: "gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR build\n"
         name: "run gradle"
